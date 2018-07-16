@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------
 | Tool Version              : Vivado v.2017.3 (lin64) Build 2018833 Wed Oct  4 19:58:07 MDT 2017
-| Date                      : Mon Jul 16 15:12:34 2018
+| Date                      : Mon Jul 16 15:41:41 2018
 | Host                      : hob-ThinkPad-T440 running 64-bit Ubuntu 16.04.4 LTS
 | Command                   : report_io -file thinpad_top_io_placed.rpt
 | Design                    : thinpad_top

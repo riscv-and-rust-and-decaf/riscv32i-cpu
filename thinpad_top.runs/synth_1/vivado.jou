@@ -2,8 +2,8 @@
 # Vivado v2017.3 (64-bit)
 # SW Build 2018833 on Wed Oct  4 19:58:07 MDT 2017
 # IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
-# Start of session at: Mon Jul 16 15:10:02 2018
-# Process ID: 28021
+# Start of session at: Mon Jul 16 15:39:11 2018
+# Process ID: 31402
 # Current directory: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1
 # Command line: vivado -log thinpad_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source thinpad_top.tcl
 # Log file: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/thinpad_top.vds

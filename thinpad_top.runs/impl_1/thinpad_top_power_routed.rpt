@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2017.3 (lin64) Build 2018833 Wed Oct  4 19:58:07 MDT 2017
-| Date             : Mon Jul 16 15:13:06 2018
+| Date             : Mon Jul 16 15:42:14 2018
 | Host             : hob-ThinkPad-T440 running 64-bit Ubuntu 16.04.4 LTS
 | Command          : report_power -file thinpad_top_power_routed.rpt -pb thinpad_top_power_summary_routed.pb -rpx thinpad_top_power_routed.rpx
 | Design           : thinpad_top
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.133        |
+| Total On-Chip Power (W)  | 0.127        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.036        |
+| Dynamic (W)              | 0.030        |
 | Device Static (W)        | 0.097        |
 | Effective TJA (C/W)      | 2.6          |
 | Max Ambient (C)          | 99.7         |
@@ -53,16 +53,15 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.001 |        4 |       --- |             --- |
-| Slice Logic    |    <0.001 |      321 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      109 |     63400 |            0.17 |
+| Slice Logic    |    <0.001 |      342 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      118 |     63400 |            0.19 |
 |   CARRY4       |    <0.001 |       18 |     15850 |            0.11 |
-|   Register     |    <0.001 |      161 |    126800 |            0.13 |
-|   F7/F8 Muxes  |    <0.001 |        8 |     63400 |            0.01 |
+|   Register     |    <0.001 |      180 |    126800 |            0.14 |
 |   Others       |     0.000 |       11 |       --- |             --- |
-| Signals        |     0.001 |      340 |       --- |             --- |
-| I/O            |     0.033 |      232 |       300 |           77.33 |
+| Signals        |    <0.001 |      385 |       --- |             --- |
+| I/O            |     0.027 |      242 |       300 |           80.67 |
 | Static Power   |     0.097 |          |           |                 |
-| Total          |     0.133 |          |           |                 |
+| Total          |     0.127 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -72,9 +71,9 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) |
 +-----------+-------------+-----------+-------------+------------+
-| Vccint    |       1.000 |     0.018 |       0.003 |      0.015 |
+| Vccint    |       1.000 |     0.017 |       0.002 |      0.015 |
 | Vccaux    |       1.800 |     0.019 |       0.001 |      0.018 |
-| Vcco33    |       3.300 |     0.013 |       0.009 |      0.004 |
+| Vcco33    |       3.300 |     0.012 |       0.008 |      0.004 |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |
@@ -138,15 +137,79 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+------------------+-----------+
-| Name             | Power (W) |
-+------------------+-----------+
-| thinpad_top      |     0.036 |
-|   ext_uart_r     |    <0.001 |
-|     tickgen      |    <0.001 |
-|   ext_uart_t     |    <0.001 |
-|     tickgen      |    <0.001 |
-|   vga800x600at75 |    <0.001 |
-+------------------+-----------+
++--------------------------------+-----------+
+| Name                           | Power (W) |
++--------------------------------+-----------+
+| thinpad_top                    |     0.030 |
+|   base_ram_data_IOBUF[0]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[10]_inst |     0.000 |
+|   base_ram_data_IOBUF[11]_inst |     0.000 |
+|   base_ram_data_IOBUF[12]_inst |     0.000 |
+|   base_ram_data_IOBUF[13]_inst |     0.000 |
+|   base_ram_data_IOBUF[14]_inst |     0.000 |
+|   base_ram_data_IOBUF[15]_inst |     0.000 |
+|   base_ram_data_IOBUF[16]_inst |     0.000 |
+|   base_ram_data_IOBUF[17]_inst |     0.000 |
+|   base_ram_data_IOBUF[18]_inst |     0.000 |
+|   base_ram_data_IOBUF[19]_inst |     0.000 |
+|   base_ram_data_IOBUF[1]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[20]_inst |     0.000 |
+|   base_ram_data_IOBUF[21]_inst |     0.000 |
+|   base_ram_data_IOBUF[22]_inst |     0.000 |
+|   base_ram_data_IOBUF[23]_inst |     0.000 |
+|   base_ram_data_IOBUF[24]_inst |     0.000 |
+|   base_ram_data_IOBUF[25]_inst |     0.000 |
+|   base_ram_data_IOBUF[26]_inst |     0.000 |
+|   base_ram_data_IOBUF[27]_inst |     0.000 |
+|   base_ram_data_IOBUF[28]_inst |     0.000 |
+|   base_ram_data_IOBUF[29]_inst |     0.000 |
+|   base_ram_data_IOBUF[2]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[30]_inst |     0.000 |
+|   base_ram_data_IOBUF[31]_inst |     0.000 |
+|   base_ram_data_IOBUF[3]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[4]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[5]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[6]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[7]_inst  |    <0.001 |
+|   base_ram_data_IOBUF[8]_inst  |     0.000 |
+|   base_ram_data_IOBUF[9]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[0]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[10]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[11]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[12]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[13]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[14]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[15]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[16]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[17]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[18]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[19]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[1]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[20]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[21]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[22]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[23]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[24]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[25]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[26]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[27]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[28]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[29]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[2]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[30]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[31]_inst  |     0.000 |
+|   ext_ram_data_IOBUF[3]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[4]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[5]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[6]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[7]_inst   |    <0.001 |
+|   ext_ram_data_IOBUF[8]_inst   |     0.000 |
+|   ext_ram_data_IOBUF[9]_inst   |     0.000 |
+|   ext_uart_r                   |    <0.001 |
+|     tickgen                    |    <0.001 |
+|   ext_uart_t                   |    <0.001 |
+|     tickgen                    |    <0.001 |
+|   vga800x600at75               |    <0.001 |
++--------------------------------+-----------+
 
 

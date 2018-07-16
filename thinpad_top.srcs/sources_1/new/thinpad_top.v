@@ -161,15 +161,22 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
 
 wire [31:0] paddr; // output
 wire [3:0] mode;   // output
+// nop; lw; sw; lb; lbu; sb; [lh lhu sh]
 wire [31:0] wdata; // output
 wire [31:0] rdata; // input
 
 wire chip_selbase_n = paddr[22];
 wire [19:0] word_sel = paddr[21:2];
 wire [1:0] byte_sel = paddr[1:0];
+wire [3:0] byte_sel_onehot_n = (byte_sel == 0) ? 4'b1110 :
+        (byte_sel == 1) ? 4'b1101 :
+        (byte_sel == 2) ? 4'b1011 :
+        4'b0111;
 
-assign base_ram_data = {32{1'bz}};
-assign ext_ram_data = {32{1'bz}};
+reg [31:0] base_wdata;
+reg [31:0] ext_wdata;
+assign base_ram_data = base_wdata;
+assign ext_ram_data = ext_wdata;
 always @(negedge clk_50M) begin
     // ce
     base_ram_ce_n <= chip_selbase_n;
@@ -190,6 +197,27 @@ always @(negedge clk_50M) begin
     // be.default: all bytes
     base_ram_be_n <= 4'b0000;
     ext_ram_be_n  <= 4'b0000;
+
+    // wdata.default: don't write
+    base_wdata <= {32{1'bz}};
+    ext_wdata <= {32{1'bz}};
+
+    case (mode)
+        2: begin // sw
+            base_ram_we_n <= 1'b0;
+            ext_ram_we_n <= 1'b0;
+            base_wdata <= wdata;
+            ext_wdata <= wdata;
+        end
+        5: begin // sb
+            base_ram_we_n <= 1'b0;
+            ext_ram_we_n <= 1'b0;
+            base_ram_be_n <= byte_sel_onehot_n;
+            ext_ram_be_n <= byte_sel_onehot_n;
+            base_wdata <= wdata;
+            ext_wdata <= wdata;
+        end
+    endcase
 end
 
 // deals with read data
@@ -207,16 +235,19 @@ assign rdata = (mode == 1) ? rdata_raw :
 
 assign leds = rdata[15:0];
 
-reg [3:0] rmode;
+reg [3:0] rmode; // just registered. because I feel like.
 assign mode = rmode;
 always @(posedge clk_50M) begin
-    rmode <= 1;
-    if (touch_btn[0]) begin
-        rmode <= 3;
-    end else if (touch_btn[1]) begin
-        rmode <= 4;
-    end
+    case (touch_btn)
+        2: rmode <= 2; // sw
+        3: rmode <= 3; // lb
+        4: rmode <= 4; // lbu
+        5: rmode <= 5; // sb
+        default: rmode <= 1; // lw
+    endcase
 end
 
 assign paddr = dip_sw;
+
+assign wdata = {24'hDEADBE, dip_sw[31:24]};
 endmodule
