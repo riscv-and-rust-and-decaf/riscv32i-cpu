@@ -21,17 +21,17 @@ create_project -in_memory -part xc7a100tfgg676-2L
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
-set_property webtalk.parent_dir /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.cache/wt [current_project]
-set_property parent.project_path /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.xpr [current_project]
+set_property webtalk.parent_dir /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.cache/wt [current_project]
+set_property parent.project_path /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.xpr [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
-set_property ip_output_repo /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.cache/ip [current_project]
+set_property ip_output_repo /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 read_verilog -library xil_defaultlib {
-  /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/sources_1/new/SEG7_LUT.v
-  /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/sources_1/new/async.v
-  /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/sources_1/new/vga.v
-  /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/sources_1/new/thinpad_top.v
+  /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/SEG7_LUT.v
+  /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/async.v
+  /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/vga.v
+  /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v
 }
 # Mark all dcp files as not used in implementation to prevent them from being
 # stitched into the results of this synthesis run. Any black boxes in the
@@ -41,8 +41,8 @@ read_verilog -library xil_defaultlib {
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc
-set_property used_in_implementation false [get_files /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc]
+read_xdc /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc
+set_property used_in_implementation false [get_files /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc]
 
 
 synth_design -top thinpad_top -part xc7a100tfgg676-2L

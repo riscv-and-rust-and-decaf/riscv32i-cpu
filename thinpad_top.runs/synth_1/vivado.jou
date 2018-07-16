@@ -2,11 +2,11 @@
 # Vivado v2017.3 (64-bit)
 # SW Build 2018833 on Wed Oct  4 19:58:07 MDT 2017
 # IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
-# Start of session at: Wed Jul  4 21:03:45 2018
-# Process ID: 681
-# Current directory: /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.runs/synth_1
+# Start of session at: Mon Jul 16 17:13:13 2018
+# Process ID: 7199
+# Current directory: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1
 # Command line: vivado -log thinpad_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source thinpad_top.tcl
-# Log file: /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.runs/synth_1/thinpad_top.vds
-# Journal file: /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.runs/synth_1/vivado.jou
+# Log file: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/thinpad_top.vds
+# Journal file: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/vivado.jou
 #-----------------------------------------------------------
 source thinpad_top.tcl -notrace

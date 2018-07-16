@@ -61,12 +61,95 @@ proc step_failed { step } {
 }
 
 
+start_step init_design
+set ACTIVE_STEP init_design
+set rc [catch {
+  create_msg_db init_design.pb
+  create_project -in_memory -part xc7a100tfgg676-2L
+  set_property design_mode GateLvl [current_fileset]
+  set_param project.singleFileAddWarning.threshold 0
+  set_property webtalk.parent_dir /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.cache/wt [current_project]
+  set_property parent.project_path /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.xpr [current_project]
+  set_property ip_output_repo /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.cache/ip [current_project]
+  set_property ip_cache_permissions {read write} [current_project]
+  add_files -quiet /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/thinpad_top.dcp
+  read_xdc /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc
+  link_design -top thinpad_top -part xc7a100tfgg676-2L
+  close_msg_db -file init_design.pb
+} RESULT]
+if {$rc} {
+  step_failed init_design
+  return -code error $RESULT
+} else {
+  end_step init_design
+  unset ACTIVE_STEP 
+}
+
+start_step opt_design
+set ACTIVE_STEP opt_design
+set rc [catch {
+  create_msg_db opt_design.pb
+  opt_design 
+  write_checkpoint -force thinpad_top_opt.dcp
+  create_report "impl_1_opt_report_drc_0" "report_drc -file thinpad_top_drc_opted.rpt -pb thinpad_top_drc_opted.pb -rpx thinpad_top_drc_opted.rpx"
+  close_msg_db -file opt_design.pb
+} RESULT]
+if {$rc} {
+  step_failed opt_design
+  return -code error $RESULT
+} else {
+  end_step opt_design
+  unset ACTIVE_STEP 
+}
+
+start_step place_design
+set ACTIVE_STEP place_design
+set rc [catch {
+  create_msg_db place_design.pb
+  implement_debug_core 
+  place_design 
+  write_checkpoint -force thinpad_top_placed.dcp
+  create_report "impl_1_place_report_io_0" "report_io -file thinpad_top_io_placed.rpt"
+  create_report "impl_1_place_report_utilization_0" "report_utilization -file thinpad_top_utilization_placed.rpt -pb thinpad_top_utilization_placed.pb"
+  create_report "impl_1_place_report_control_sets_0" "report_control_sets -file thinpad_top_control_sets_placed.rpt"
+  close_msg_db -file place_design.pb
+} RESULT]
+if {$rc} {
+  step_failed place_design
+  return -code error $RESULT
+} else {
+  end_step place_design
+  unset ACTIVE_STEP 
+}
+
+start_step route_design
+set ACTIVE_STEP route_design
+set rc [catch {
+  create_msg_db route_design.pb
+  route_design 
+  write_checkpoint -force thinpad_top_routed.dcp
+  create_report "impl_1_route_report_drc_0" "report_drc -file thinpad_top_drc_routed.rpt -pb thinpad_top_drc_routed.pb -rpx thinpad_top_drc_routed.rpx"
+  create_report "impl_1_route_report_methodology_0" "report_methodology -file thinpad_top_methodology_drc_routed.rpt -pb thinpad_top_methodology_drc_routed.pb -rpx thinpad_top_methodology_drc_routed.rpx"
+  create_report "impl_1_route_report_power_0" "report_power -file thinpad_top_power_routed.rpt -pb thinpad_top_power_summary_routed.pb -rpx thinpad_top_power_routed.rpx"
+  create_report "impl_1_route_report_route_status_0" "report_route_status -file thinpad_top_route_status.rpt -pb thinpad_top_route_status.pb"
+  create_report "impl_1_route_report_timing_summary_0" "report_timing_summary -file thinpad_top_timing_summary_routed.rpt -warn_on_violation  -rpx thinpad_top_timing_summary_routed.rpx"
+  create_report "impl_1_route_report_incremental_reuse_0" "report_incremental_reuse -file thinpad_top_incremental_reuse_routed.rpt"
+  create_report "impl_1_route_report_clock_utilization_0" "report_clock_utilization -file thinpad_top_clock_utilization_routed.rpt"
+  close_msg_db -file route_design.pb
+} RESULT]
+if {$rc} {
+  write_checkpoint -force thinpad_top_routed_error.dcp
+  step_failed route_design
+  return -code error $RESULT
+} else {
+  end_step route_design
+  unset ACTIVE_STEP 
+}
+
 start_step write_bitstream
 set ACTIVE_STEP write_bitstream
 set rc [catch {
   create_msg_db write_bitstream.pb
-  open_checkpoint thinpad_top_routed.dcp
-  set_property webtalk.parent_dir /media/psf/Home/Documents/Codes/Tsinghua/Grade3-3/thinpad_top/thinpad_top.cache/wt [current_project]
   catch { write_mem_info -force thinpad_top.mmi }
   write_bitstream -force thinpad_top.bit 
   catch {write_debug_probes -quiet -force thinpad_top}

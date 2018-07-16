@@ -100,7 +100,6 @@ SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
 SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
 
 reg[15:0] led_bits;
-assign leds = led_bits;
 
 always@(posedge clock_btn or posedge reset_btn) begin
     if(reset_btn)begin //复位按下，设置LED和数码管为初始值
@@ -169,5 +168,20 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
     .data_enable(video_de)
 );
 /* =========== Demo code end =========== */
+
+wire [22:0] flash_addr;
+
+// Flash 演示
+assign flash_ce_n   = 1'b0;                         // always enable flash for demo
+assign flash_byte_n = 1'b1;                         // 16-bit mode
+assign flash_we_n   = 1'b1;                         // never write
+assign flash_vpen   = 1'b1;                         // experience
+assign flash_rp_n   = ~reset_btn;
+assign flash_a      = {flash_addr[22:1], 1'b0};     // 16-bit mode
+assign flash_d      = {16{1'bz}};
+assign flash_oe_n   = 1'b0;                         // dont know why but works
+
+assign leds = flash_d;
+assign flash_addr = dip_sw[22:0];
 
 endmodule
