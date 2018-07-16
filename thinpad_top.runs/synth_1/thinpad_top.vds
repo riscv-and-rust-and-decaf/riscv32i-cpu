@@ -2,8 +2,8 @@
 # Vivado v2017.3 (64-bit)
 # SW Build 2018833 on Wed Oct  4 19:58:07 MDT 2017
 # IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
-# Start of session at: Mon Jul 16 17:13:13 2018
-# Process ID: 7199
+# Start of session at: Mon Jul 16 19:35:59 2018
+# Process ID: 16742
 # Current directory: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1
 # Command line: vivado -log thinpad_top.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source thinpad_top.tcl
 # Log file: /home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/thinpad_top.vds
@@ -15,9 +15,9 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 7207 
+INFO: Helper process launched with PID 16755 
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:13 . Memory (MB): peak = 1240.375 ; gain = 62.996 ; free physical = 1100 ; free virtual = 5080
+Starting RTL Elaboration : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 1240.371 ; gain = 62.996 ; free physical = 1150 ; free virtual = 5097
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-638] synthesizing module 'thinpad_top' [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:3]
 INFO: [Synth 8-638] synthesizing module 'SEG7_LUT' [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/SEG7_LUT.v:1]
@@ -36,7 +36,7 @@ INFO: [Synth 8-638] synthesizing module 'BaudTickGen' [/home/hob/Programs/riscv-
 	Parameter Inc bound to: 3221 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'BaudTickGen' (2#1) [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/async.v:189]
 INFO: [Synth 8-256] done synthesizing module 'async_receiver' (3#1) [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/async.v:75]
-WARNING: [Synth 8-350] instance 'ext_uart_r' of module 'async_receiver' requires 7 connections, but only 5 given [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:122]
+WARNING: [Synth 8-350] instance 'ext_uart_r' of module 'async_receiver' requires 7 connections, but only 5 given [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:111]
 INFO: [Synth 8-638] synthesizing module 'async_transmitter' [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/async.v:14]
 	Parameter ClkFrequency bound to: 50000000 - type: integer 
 	Parameter Baud bound to: 9600 - type: integer 
@@ -62,9 +62,6 @@ INFO: [Synth 8-638] synthesizing module 'vga' [/home/hob/Programs/riscv-and-rust
 	Parameter HSPP bound to: 1 - type: integer 
 	Parameter VSPP bound to: 1 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'vga' (5#1) [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/vga.v:15]
-WARNING: [Synth 8-6014] Unused sequential element led_bits_reg was removed.  [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:107]
-WARNING: [Synth 8-6014] Unused sequential element flashstate_reg was removed.  [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:186]
-WARNING: [Synth 8-6014] Unused sequential element flash_oe_nr_reg was removed.  [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:188]
 WARNING: [Synth 8-3848] Net uart_rdn in module/entity thinpad_top does not have driver. [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:17]
 WARNING: [Synth 8-3848] Net uart_wrn in module/entity thinpad_top does not have driver. [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:18]
 WARNING: [Synth 8-3848] Net base_ram_addr in module/entity thinpad_top does not have driver. [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:25]
@@ -197,7 +194,7 @@ WARNING: [Synth 8-3331] design thinpad_top has unconnected port base_ram_data[0]
 WARNING: [Synth 8-3331] design thinpad_top has unconnected port ext_ram_data[31]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 1282.906 ; gain = 105.527 ; free physical = 1101 ; free virtual = 5084
+Finished RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 1282.902 ; gain = 105.527 ; free physical = 1162 ; free virtual = 5109
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -207,7 +204,7 @@ Report Check Netlist:
 |1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
 +------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 1282.906 ; gain = 105.527 ; free physical = 1101 ; free virtual = 5084
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1282.902 ; gain = 105.527 ; free physical = 1162 ; free virtual = 5109
 ---------------------------------------------------------------------------------
 INFO: [Device 21-403] Loading part xc7a100tfgg676-2L
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -232,22 +229,22 @@ Completed Processing XDC Constraints
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 1623.109 ; gain = 0.000 ; free physical = 829 ; free virtual = 4851
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1622.488 ; gain = 0.000 ; free physical = 899 ; free virtual = 4848
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:33 ; elapsed = 00:00:52 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 907 ; free virtual = 4926
+Finished Constraint Validation : Time (s): cpu = 00:00:32 ; elapsed = 00:00:48 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 956 ; free virtual = 4908
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a100tfgg676-2L
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:33 ; elapsed = 00:00:52 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 907 ; free virtual = 4926
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:32 ; elapsed = 00:00:48 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 956 ; free virtual = 4908
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:33 ; elapsed = 00:00:52 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 909 ; free virtual = 4927
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:32 ; elapsed = 00:00:48 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 957 ; free virtual = 4909
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'RxD_state_reg' in module 'async_receiver'
 INFO: [Synth 8-5544] ROM "RxD_bit" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
@@ -290,7 +287,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'RxD_state_reg' using encod
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'TxD_state_reg' using encoding 'sequential' in module 'async_transmitter'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:34 ; elapsed = 00:00:52 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 900 ; free virtual = 4918
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:33 ; elapsed = 00:00:48 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 949 ; free virtual = 4900
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -311,6 +308,7 @@ Detailed RTL Component Info :
 	   2 Input      2 Bit       Adders := 1     
 +---Registers : 
 	               22 Bit    Registers := 2     
+	               16 Bit    Registers := 1     
 	               12 Bit    Registers := 2     
 	                8 Bit    Registers := 5     
 	                6 Bit    Registers := 1     
@@ -337,6 +335,7 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input      8 Bit       Adders := 1     
 +---Registers : 
+	               16 Bit    Registers := 1     
 	                8 Bit    Registers := 3     
 	                1 Bit    Registers := 2     
 Module BaudTickGen 
@@ -409,6 +408,13 @@ WARNING: [Synth 8-6014] Unused sequential element ext_uart_r/GapCnt_reg was remo
 WARNING: [Synth 8-6014] Unused sequential element number_reg was removed.  [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:99]
 WARNING: [Synth 8-3917] design thinpad_top has port dpy0[0] driven by constant 0
 WARNING: [Synth 8-3917] design thinpad_top has port dpy1[0] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[22] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[21] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[20] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[19] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[18] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[17] driven by constant 0
+WARNING: [Synth 8-3917] design thinpad_top has port flash_a[16] driven by constant 0
 WARNING: [Synth 8-3917] design thinpad_top has port flash_a[0] driven by constant 0
 WARNING: [Synth 8-3917] design thinpad_top has port flash_vpen driven by constant 1
 WARNING: [Synth 8-3917] design thinpad_top has port flash_ce_n driven by constant 0
@@ -421,8 +427,9 @@ WARNING: [Synth 8-3332] Sequential element (ext_uart_r/GapCnt_reg[3]) is unused 
 WARNING: [Synth 8-3332] Sequential element (ext_uart_r/GapCnt_reg[2]) is unused and will be removed from module thinpad_top.
 WARNING: [Synth 8-3332] Sequential element (ext_uart_r/GapCnt_reg[1]) is unused and will be removed from module thinpad_top.
 WARNING: [Synth 8-3332] Sequential element (ext_uart_r/GapCnt_reg[0]) is unused and will be removed from module thinpad_top.
+WARNING: [Synth 8-3332] Sequential element (far_reg[0]) is unused and will be removed from module thinpad_top.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:34 ; elapsed = 00:00:53 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 888 ; free virtual = 4909
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:34 ; elapsed = 00:00:49 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 955 ; free virtual = 4907
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -434,13 +441,13 @@ Report RTL Partitions:
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:43 ; elapsed = 00:01:05 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4778
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:42 ; elapsed = 00:01:01 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 820 ; free virtual = 4770
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:43 ; elapsed = 00:01:05 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Timing Optimization : Time (s): cpu = 00:00:42 ; elapsed = 00:01:01 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 819 ; free virtual = 4769
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -452,7 +459,7 @@ Report RTL Partitions:
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:43 ; elapsed = 00:01:05 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 738 ; free virtual = 4776
+Finished Technology Mapping : Time (s): cpu = 00:00:42 ; elapsed = 00:01:01 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -492,7 +499,7 @@ CRITICAL WARNING: [Synth 8-6030] Inout pin 'flash_d[2]' is read and/or written w
 CRITICAL WARNING: [Synth 8-6030] Inout pin 'flash_d[1]' is read and/or written without using tristate logic. Proper direction of connection may be wrongly inferred. Please use specific direction to avoid any incorrect logic issue [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:3]
 CRITICAL WARNING: [Synth 8-6030] Inout pin 'flash_d[0]' is read and/or written without using tristate logic. Proper direction of connection may be wrongly inferred. Please use specific direction to avoid any incorrect logic issue [/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.srcs/sources_1/new/thinpad_top.v:3]
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished IO Insertion : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -505,7 +512,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -517,25 +524,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -551,27 +558,26 @@ Report Cell Usage:
 +------+-------+------+
 |      |Cell   |Count |
 +------+-------+------+
-|1     |BUFG   |     2|
-|2     |CARRY4 |    18|
-|3     |LUT1   |    14|
-|4     |LUT2   |     4|
+|1     |BUFG   |     1|
+|2     |CARRY4 |    20|
+|3     |LUT1   |    15|
+|4     |LUT2   |     5|
 |5     |LUT3   |     4|
 |6     |LUT4   |    44|
 |7     |LUT5   |    10|
-|8     |LUT6   |    21|
-|9     |FDCE   |     8|
-|10    |FDRE   |   114|
-|11    |FDSE   |     5|
-|12    |IBUF   |    42|
-|13    |OBUF   |    74|
-|14    |OBUFT  |    67|
+|8     |LUT6   |    26|
+|9     |FDRE   |   137|
+|10    |FDSE   |     5|
+|11    |IBUF   |    51|
+|12    |OBUF   |    74|
+|13    |OBUFT  |    67|
 +------+-------+------+
 
 Report Instance Areas: 
 +------+-----------------+----------------------------+------+
 |      |Instance         |Module                      |Cells |
 +------+-----------------+----------------------------+------+
-|1     |top              |                            |   427|
+|1     |top              |                            |   459|
 |2     |  ext_uart_r     |async_receiver              |    72|
 |3     |    tickgen      |BaudTickGen                 |    39|
 |4     |  ext_uart_t     |async_transmitter           |    63|
@@ -579,13 +585,13 @@ Report Instance Areas:
 |6     |  vga800x600at75 |vga                         |    56|
 +------+-----------------+----------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.109 ; gain = 445.730 ; free physical = 739 ; free virtual = 4777
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.488 ; gain = 445.113 ; free physical = 818 ; free virtual = 4768
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 16 critical warnings and 195 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:33 ; elapsed = 00:00:41 . Memory (MB): peak = 1623.109 ; gain = 105.527 ; free physical = 792 ; free virtual = 4831
-Synthesis Optimization Complete : Time (s): cpu = 00:00:44 ; elapsed = 00:01:06 . Memory (MB): peak = 1623.117 ; gain = 445.730 ; free physical = 797 ; free virtual = 4835
+Synthesis finished with 0 errors, 16 critical warnings and 193 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:33 ; elapsed = 00:00:38 . Memory (MB): peak = 1622.488 ; gain = 105.527 ; free physical = 872 ; free virtual = 4822
+Synthesis Optimization Complete : Time (s): cpu = 00:00:43 ; elapsed = 00:01:02 . Memory (MB): peak = 1622.496 ; gain = 445.113 ; free physical = 872 ; free virtual = 4822
 INFO: [Project 1-571] Translating synthesized netlist
-INFO: [Netlist 29-17] Analyzing 60 Unisim elements for replacement
+INFO: [Netlist 29-17] Analyzing 71 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
@@ -593,10 +599,10 @@ INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
 INFO: [Common 17-83] Releasing license: Synthesis
-36 Infos, 155 Warnings, 19 Critical Warnings and 0 Errors encountered.
+36 Infos, 160 Warnings, 19 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:46 ; elapsed = 00:01:08 . Memory (MB): peak = 1623.117 ; gain = 459.113 ; free physical = 788 ; free virtual = 4824
+synth_design: Time (s): cpu = 00:00:45 ; elapsed = 00:01:04 . Memory (MB): peak = 1622.496 ; gain = 458.496 ; free physical = 867 ; free virtual = 4817
 INFO: [Common 17-1381] The checkpoint '/home/hob/Programs/riscv-and-rust-and-decaf/riscv32i-cpu/thinpad_top.runs/synth_1/thinpad_top.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file thinpad_top_utilization_synth.rpt -pb thinpad_top_utilization_synth.pb
-report_utilization: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.17 . Memory (MB): peak = 1647.121 ; gain = 0.000 ; free physical = 787 ; free virtual = 4823
-INFO: [Common 17-206] Exiting Vivado at Mon Jul 16 17:14:37 2018...
+report_utilization: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.17 . Memory (MB): peak = 1646.500 ; gain = 0.000 ; free physical = 872 ; free virtual = 4822
+INFO: [Common 17-206] Exiting Vivado at Mon Jul 16 19:37:14 2018...

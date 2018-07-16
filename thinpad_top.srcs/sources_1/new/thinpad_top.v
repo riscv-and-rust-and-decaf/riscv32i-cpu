@@ -101,17 +101,6 @@ SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
 
 reg[15:0] led_bits;
 
-always@(posedge clock_btn or posedge reset_btn) begin
-    if(reset_btn)begin //复位按下，设置LED和数码管为初始值
-        number<=0;
-        led_bits <= 16'h1;
-    end
-    else begin //每次按下时钟按钮，数码管显示值加1，LED循环左移
-        number <= number+1;
-        led_bits <= {led_bits[14:0],led_bits[15]};
-    end
-end
-
 //直连串口接收发送演示，从直连串口收到的数据再发送出去
 wire [7:0] ext_uart_rx;
 reg  [7:0] ext_uart_buffer, ext_uart_tx;
@@ -181,7 +170,19 @@ assign flash_a      = {flash_addr[22:1], 1'b0};     // 16-bit mode
 assign flash_d      = {16{1'bz}};
 assign flash_oe_n   = 1'b0;                         // dont know why but works
 
+reg [22:0] far;
+always @(posedge clk_50M) begin
+    if (clock_btn) begin
+        number <= 0;
+    end else begin
+        far <= dip_sw[15:0];
+        if (flash_d != dip_sw[31:16]) begin
+            number <= number + 1;
+        end
+    end
+end
+
 assign leds = flash_d;
-assign flash_addr = dip_sw[22:0];
+assign flash_addr = far;
 
 endmodule
