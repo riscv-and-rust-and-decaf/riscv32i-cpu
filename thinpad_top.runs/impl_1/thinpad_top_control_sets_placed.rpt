@@ -1,12 +1,12 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
-----------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2017.3 (lin64) Build 2018833 Wed Oct  4 19:58:07 MDT 2017
-| Date         : Wed Jul  4 21:10:13 2018
-| Host         : ubuntu running 64-bit unknown
-| Command      : report_control_sets -verbose -file thinpad_top_control_sets_placed.rpt
+| Date         : Mon Jul 16 15:12:34 2018
+| Host         : hob-ThinkPad-T440 running 64-bit Ubuntu 16.04.4 LTS
+| Command      : report_control_sets -file thinpad_top_control_sets_placed.rpt
 | Design       : thinpad_top
 | Device       : xc7a100t
-----------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 
 Control Set Information
 
@@ -14,17 +14,15 @@ Table of Contents
 -----------------
 1. Summary
 2. Flip-Flop Distribution
-3. Detailed Control Set Information
 
 1. Summary
 ----------
 
-+----------------------------------------------------------+-------+
-|                          Status                          | Count |
-+----------------------------------------------------------+-------+
-| Number of unique control sets                            |    12 |
-| Unused register locations in slices containing registers |    33 |
-+----------------------------------------------------------+-------+
++-------------------------------+-------+
+|             Status            | Count |
++-------------------------------+-------+
+| Number of unique control sets |    12 |
++-------------------------------+-------+
 
 
 2. Flip-Flop Distribution
@@ -33,44 +31,12 @@ Table of Contents
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
 +--------------+-----------------------+------------------------+-----------------+--------------+
-| No           | No                    | No                     |              34 |           13 |
-| No           | No                    | Yes                    |              40 |           13 |
+| No           | No                    | No                     |              79 |           49 |
+| No           | No                    | Yes                    |               0 |            0 |
 | No           | Yes                   | No                     |              33 |           10 |
-| Yes          | No                    | No                     |              41 |           10 |
+| Yes          | No                    | No                     |              38 |           12 |
 | Yes          | No                    | Yes                    |               0 |            0 |
 | Yes          | Yes                   | No                     |              11 |            3 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
-
-
-3. Detailed Control Set Information
------------------------------------
-
-+----------------------+---------------------------------------+----------------------------------+------------------+----------------+
-|     Clock Signal     |             Enable Signal             |         Set/Reset Signal         | Slice Load Count | Bel Load Count |
-+----------------------+---------------------------------------+----------------------------------+------------------+----------------+
-|  video_clk_OBUF_BUFG | ext_uart_r/tickgen/OversamplingTick   |                                  |                1 |              1 |
-|  video_clk_OBUF_BUFG | ext_uart_t//i__n_0                    |                                  |                1 |              4 |
-|  video_clk_OBUF_BUFG | ext_uart_r//i__n_0                    |                                  |                1 |              4 |
-|  video_clk_OBUF_BUFG | ext_uart_r/E[0]                       |                                  |                1 |              8 |
-|  video_clk_OBUF_BUFG | ext_uart_t/ext_uart_tx_reg[7][0]      |                                  |                2 |              8 |
-|  video_clk_OBUF_BUFG | ext_uart_r/tickgen/RxD_data_reg[0][0] |                                  |                2 |              8 |
-|  video_clk_OBUF_BUFG | ext_uart_t/tickgen/E[0]               |                                  |                2 |              8 |
-|  video_clk_OBUF_BUFG |                                       | vga800x600at75/vdata             |                3 |             11 |
-|  video_clk_OBUF_BUFG | vga800x600at75/vdata                  | vga800x600at75/vdata[11]_i_1_n_0 |                3 |             11 |
-|  video_clk_OBUF_BUFG |                                       | ext_uart_t//i___0_n_0            |                7 |             22 |
-|  video_clk_OBUF_BUFG |                                       |                                  |               13 |             34 |
-|  clock_btn_IBUF_BUFG |                                       | reset_btn_IBUF                   |               13 |             40 |
-+----------------------+---------------------------------------+----------------------------------+------------------+----------------+
-
-
-+--------+-----------------------+
-| Fanout | Number of ControlSets |
-+--------+-----------------------+
-| 1      |                     1 |
-| 4      |                     2 |
-| 8      |                     4 |
-| 11     |                     2 |
-| 16+    |                     3 |
-+--------+-----------------------+
 
 

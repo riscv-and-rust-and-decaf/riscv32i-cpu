@@ -22,19 +22,19 @@ module thinpad_top(
 
     //BaseRAM信号
     inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
-    output wire[19:0] base_ram_addr, //BaseRAM地址
-    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire base_ram_ce_n,       //BaseRAM片选，低有效
-    output wire base_ram_oe_n,       //BaseRAM读使能，低有效
-    output wire base_ram_we_n,       //BaseRAM写使能，低有效
+    output reg[19:0] base_ram_addr, //BaseRAM地址
+    output reg[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
+    output reg base_ram_ce_n,       //BaseRAM片选，低有效
+    output reg base_ram_oe_n,       //BaseRAM读使能，低有效
+    output reg base_ram_we_n,       //BaseRAM写使能，低有效
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
-    output wire[19:0] ext_ram_addr, //ExtRAM地址
-    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire ext_ram_ce_n,       //ExtRAM片选，低有效
-    output wire ext_ram_oe_n,       //ExtRAM读使能，低有效
-    output wire ext_ram_we_n,       //ExtRAM写使能，低有效
+    output reg[19:0] ext_ram_addr, //ExtRAM地址
+    output reg[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
+    output reg ext_ram_ce_n,       //ExtRAM片选，低有效
+    output reg ext_ram_oe_n,       //ExtRAM读使能，低有效
+    output reg ext_ram_we_n,       //ExtRAM写使能，低有效
 
     //直连串口信号
     output wire txd,  //直连串口发送端
@@ -99,19 +99,6 @@ reg[7:0] number;
 SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
 SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
 
-reg[15:0] led_bits;
-assign leds = led_bits;
-
-always@(posedge clock_btn or posedge reset_btn) begin
-    if(reset_btn)begin //复位按下，设置LED和数码管为初始值
-        number<=0;
-        led_bits <= 16'h1;
-    end
-    else begin //每次按下时钟按钮，数码管显示值加1，LED循环左移
-        number <= number+1;
-        led_bits <= {led_bits[14:0],led_bits[15]};
-    end
-end
 
 //直连串口接收发送演示，从直连串口收到的数据再发送出去
 wire [7:0] ext_uart_rx;
@@ -127,20 +114,20 @@ async_receiver #(.ClkFrequency(50000000),.Baud(9600)) //接收模块，9600无�
         .RxD_clear(ext_uart_ready),       //清除接收标志
         .RxD_data(ext_uart_rx)             //接收到的一字节数据
     );
-    
+
 always @(posedge clk_50M) begin //接收到缓冲区ext_uart_buffer
     if(ext_uart_ready)begin
-        ext_uart_buffer <= ext_uart_rx;
+        ext_uart_buffer <= ext_uart_rx & 8'b11111110;
         ext_uart_avai <= 1;
-    end else if(!ext_uart_busy && ext_uart_avai)begin 
+    end else if(!ext_uart_busy && ext_uart_avai)begin
         ext_uart_avai <= 0;
     end
 end
 always @(posedge clk_50M) begin //将缓冲区ext_uart_buffer发送出去
-    if(!ext_uart_busy && ext_uart_avai)begin 
+    if(!ext_uart_busy && ext_uart_avai)begin
         ext_uart_tx <= ext_uart_buffer;
         ext_uart_start <= 1;
-    end else begin 
+    end else begin
         ext_uart_start <= 0;
     end
 end
@@ -161,7 +148,7 @@ assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
 assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
 assign video_clk = clk_50M;
 vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
-    .clk(clk_50M), 
+    .clk(clk_50M),
     .hdata(hdata), //横坐标
     .vdata(),      //纵坐标
     .hsync(video_hsync),
@@ -170,4 +157,66 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
 );
 /* =========== Demo code end =========== */
 
+//访存演示
+
+wire [31:0] paddr; // output
+wire [3:0] mode;   // output
+wire [31:0] wdata; // output
+wire [31:0] rdata; // input
+
+wire chip_selbase_n = paddr[22];
+wire [19:0] word_sel = paddr[21:2];
+wire [1:0] byte_sel = paddr[1:0];
+
+assign base_ram_data = {32{1'bz}};
+assign ext_ram_data = {32{1'bz}};
+always @(negedge clk_50M) begin
+    // ce
+    base_ram_ce_n <= chip_selbase_n;
+    ext_ram_ce_n <= ~chip_selbase_n;
+
+    // addr
+    base_ram_addr <= word_sel;
+    ext_ram_addr  <= word_sel;
+
+    // we.default: no write
+    base_ram_we_n <= 1'b1;
+    ext_ram_we_n  <= 1'b1;
+
+    // oe.default: 0
+    base_ram_oe_n <= 1'b0;
+    ext_ram_oe_n  <= 1'b0;
+
+    // be.default: all bytes
+    base_ram_be_n <= 4'b0000;
+    ext_ram_be_n  <= 4'b0000;
+end
+
+// deals with read data
+// before byte selection and extension
+wire [31:0] rdata_raw = chip_selbase_n ? ext_ram_data : base_ram_data;
+// byte selection
+wire [7:0] rdata_bs = (byte_sel == 0) ? rdata_raw[7:0] :
+        (byte_sel == 1) ? rdata_raw[15:8] :
+        (byte_sel == 2) ? rdata_raw[23:16] :
+        rdata_raw[31:24];
+// sign/zero extension
+assign rdata = (mode == 1) ? rdata_raw :
+        (mode == 3) ? {{24{rdata_bs[7]}},rdata_bs} :
+        (mode == 4) ? {{24{1'b0}},rdata_bs} : 0;
+
+assign leds = rdata[15:0];
+
+reg [3:0] rmode;
+assign mode = rmode;
+always @(posedge clk_50M) begin
+    rmode <= 1;
+    if (touch_btn[0]) begin
+        rmode <= 3;
+    end else if (touch_btn[1]) begin
+        rmode <= 4;
+    end
+end
+
+assign paddr = dip_sw;
 endmodule
