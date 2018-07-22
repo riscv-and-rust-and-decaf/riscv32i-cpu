@@ -22,19 +22,19 @@ module thinpad_top(
 
     //BaseRAM信号
     inout wire[31:0] base_ram_data,  //BaseRAM数据，低8位与CPLD串口控制器共享
-    output reg[19:0] base_ram_addr, //BaseRAM地址
-    output reg[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output reg base_ram_ce_n,       //BaseRAM片选，低有效
-    output reg base_ram_oe_n,       //BaseRAM读使能，低有效
-    output reg base_ram_we_n,       //BaseRAM写使能，低有效
+    output wire[19:0] base_ram_addr, //BaseRAM地址
+    output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
+    output wire base_ram_ce_n,       //BaseRAM片选，低有效
+    output wire base_ram_oe_n,       //BaseRAM读使能，低有效
+    output wire base_ram_we_n,       //BaseRAM写使能，低有效
 
     //ExtRAM信号
     inout wire[31:0] ext_ram_data,  //ExtRAM数据
-    output reg[19:0] ext_ram_addr, //ExtRAM地址
-    output reg[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output reg ext_ram_ce_n,       //ExtRAM片选，低有效
-    output reg ext_ram_oe_n,       //ExtRAM读使能，低有效
-    output reg ext_ram_we_n,       //ExtRAM写使能，低有效
+    output wire[19:0] ext_ram_addr, //ExtRAM地址
+    output wire[3:0] ext_ram_be_n,  //ExtRAM字节使能，低有效。如果不使用字节使能，请保持为0
+    output wire ext_ram_ce_n,       //ExtRAM片选，低有效
+    output wire ext_ram_oe_n,       //ExtRAM读使能，低有效
+    output wire ext_ram_we_n,       //ExtRAM写使能，低有效
 
     //直连串口信号
     output wire txd,  //直连串口发送端
@@ -157,97 +157,84 @@ vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
 );
 /* =========== Demo code end =========== */
 
-//访存演示
+reg clk25;
 
-wire [31:0] paddr; // output
-wire [3:0] mode;   // output
-// nop; lw; sw; lb; lbu; sb; [lh lhu sh]
-wire [31:0] wdata; // output
-wire [31:0] rdata; // input
-
-wire chip_selbase_n = paddr[22];
-wire [19:0] word_sel = paddr[21:2];
-wire [1:0] byte_sel = paddr[1:0];
-wire [3:0] byte_sel_onehot_n = (byte_sel == 0) ? 4'b1110 :
-        (byte_sel == 1) ? 4'b1101 :
-        (byte_sel == 2) ? 4'b1011 :
-        4'b0111;
-
-reg [31:0] base_wdata;
-reg [31:0] ext_wdata;
-assign base_ram_data = base_wdata;
-assign ext_ram_data = ext_wdata;
-always @(negedge clk_50M) begin
-    // ce
-    base_ram_ce_n <= chip_selbase_n;
-    ext_ram_ce_n <= ~chip_selbase_n;
-
-    // addr
-    base_ram_addr <= word_sel;
-    ext_ram_addr  <= word_sel;
-
-    // we.default: no write
-    base_ram_we_n <= 1'b1;
-    ext_ram_we_n  <= 1'b1;
-
-    // oe.default: 0
-    base_ram_oe_n <= 1'b0;
-    ext_ram_oe_n  <= 1'b0;
-
-    // be.default: all bytes
-    base_ram_be_n <= 4'b0000;
-    ext_ram_be_n  <= 4'b0000;
-
-    // wdata.default: don't write
-    base_wdata <= {32{1'bz}};
-    ext_wdata <= {32{1'bz}};
-
-    case (mode)
-        2: begin // sw
-            base_ram_we_n <= 1'b0;
-            ext_ram_we_n <= 1'b0;
-            base_wdata <= wdata;
-            ext_wdata <= wdata;
-        end
-        5: begin // sb
-            base_ram_we_n <= 1'b0;
-            ext_ram_we_n <= 1'b0;
-            base_ram_be_n <= byte_sel_onehot_n;
-            ext_ram_be_n <= byte_sel_onehot_n;
-            base_wdata <= wdata;
-            ext_wdata <= wdata;
-        end
-    endcase
+always @(posedge clk_50M) begin
+    clk25 <= ~clk25;
 end
 
-// deals with read data
-// before byte selection and extension
-wire [31:0] rdata_raw = chip_selbase_n ? ext_ram_data : base_ram_data;
-// byte selection
-wire [7:0] rdata_bs = (byte_sel == 0) ? rdata_raw[7:0] :
-        (byte_sel == 1) ? rdata_raw[15:8] :
-        (byte_sel == 2) ? rdata_raw[23:16] :
-        rdata_raw[31:24];
-// sign/zero extension
-assign rdata = (mode == 1) ? rdata_raw :
-        (mode == 3) ? {{24{rdata_bs[7]}},rdata_bs} :
-        (mode == 4) ? {{24{1'b0}},rdata_bs} : 0;
+ram ram(
+    .clk(clk_50M),
+    .rst(~reset_btn),
+    .addr(addr),
+    .mode(mode),
+    .rdata(rdata_out),
+    .wdata(wdata),
+    .ok(ok),
+    .uart_rdn(uart_rdn),
+    .uart_wrn(uart_wrn),
+    .uart_dataready(uart_dataready),
+    .uart_tbre(uart_tbre),
+    .uart_tsre(uart_tsre),
+    .base_ram_data(base_ram_data),
+    .base_ram_addr(base_ram_addr),
+    .base_ram_be_n(base_ram_be_n),
+    .base_ram_ce_n(base_ram_ce_n),
+    .base_ram_oe_n(base_ram_oe_n),
+    .base_ram_we_n(base_ram_we_n),
+    .ext_ram_data(ext_ram_data),
+    .ext_ram_addr(ext_ram_addr),
+    .ext_ram_be_n(ext_ram_be_n),
+    .ext_ram_ce_n(ext_ram_ce_n),
+    .ext_ram_oe_n(ext_ram_oe_n),
+    .ext_ram_we_n(ext_ram_we_n)
+);
 
+reg [31:0] addr;
+reg [ 3:0] mode;
+reg [31:0] rdata;
+reg [31:0] wdata;
+wire ok;
+wire[31:0] rdata_out;
 assign leds = rdata[15:0];
 
-reg [3:0] rmode; // just registered. because I feel like.
-assign mode = rmode;
+reg last_clock;
 always @(posedge clk_50M) begin
-    case (touch_btn)
-        2: rmode <= 2; // sw
-        3: rmode <= 3; // lb
-        4: rmode <= 4; // lbu
-        5: rmode <= 5; // sb
-        default: rmode <= 1; // lw
-    endcase
+    last_clock <= clock_btn;
 end
 
-assign paddr = dip_sw;
+always @(posedge clk_50M or posedge reset_btn) begin
+    if(reset_btn == 1) begin
+        addr <= 0;
+        mode <= 0;
+        wdata <= 0;
+        rdata <= 0;
+        number <= 0;
+    end else begin
+        addr <= addr;
+        mode <= 4'b0000;
+        wdata <= wdata;
+        rdata <= rdata;
+        number <= number;
+        if(number == 0) begin
+            if(clock_btn && ~last_clock) begin
+                wdata <= dip_sw;
+                number <= 1;
+            end
+        end else if(number == 1) begin
+            if(clock_btn && ~last_clock) begin
+                addr <= {{9{1'b0}}, dip_sw[22:0]};
+                mode <= dip_sw[31:28];
+                number <= 2;
+            end
+        end else if(number == 2) begin
+            number <= 3;
+        end else if(number == 3) begin
+            rdata <= rdata_out;
+            number <= 0;
+        end
 
-assign wdata = {24'hDEADBE, dip_sw[31:24]};
+    end
+end
+
 endmodule
