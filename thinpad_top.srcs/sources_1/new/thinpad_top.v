@@ -163,7 +163,29 @@ always @(posedge clk_50M) begin
     clk25 <= ~clk25;
 end
 
-ram ram(
+// ram ram(
+//     .clk(clk_50M),
+//     .rst(~reset_btn),
+//     .addr(addr),
+//     .mode(mode),
+//     .rdata(rdata_out),
+//     .wdata(wdata),
+//     .ok(ok),
+//     .base_ram_data(base_ram_data),
+//     .base_ram_addr(base_ram_addr),
+//     .base_ram_be_n(base_ram_be_n),
+//     .base_ram_ce_n(base_ram_ce_n),
+//     .base_ram_oe_n(base_ram_oe_n),
+//     .base_ram_we_n(base_ram_we_n),
+//     .ext_ram_data(ext_ram_data),
+//     .ext_ram_addr(ext_ram_addr),
+//     .ext_ram_be_n(ext_ram_be_n),
+//     .ext_ram_ce_n(ext_ram_ce_n),
+//     .ext_ram_oe_n(ext_ram_oe_n),
+//     .ext_ram_we_n(ext_ram_we_n)
+// );
+
+serial serial(
     .clk(clk_50M),
     .rst(~reset_btn),
     .addr(addr),
@@ -176,18 +198,8 @@ ram ram(
     .uart_dataready(uart_dataready),
     .uart_tbre(uart_tbre),
     .uart_tsre(uart_tsre),
-    .base_ram_data(base_ram_data),
-    .base_ram_addr(base_ram_addr),
-    .base_ram_be_n(base_ram_be_n),
-    .base_ram_ce_n(base_ram_ce_n),
-    .base_ram_oe_n(base_ram_oe_n),
-    .base_ram_we_n(base_ram_we_n),
-    .ext_ram_data(ext_ram_data),
-    .ext_ram_addr(ext_ram_addr),
-    .ext_ram_be_n(ext_ram_be_n),
-    .ext_ram_ce_n(ext_ram_ce_n),
-    .ext_ram_oe_n(ext_ram_oe_n),
-    .ext_ram_we_n(ext_ram_we_n)
+    .base_ram_data(base_ram_data[7:0]),
+    .base_ram_ce_n(base_ram_ce_n)
 );
 
 reg [31:0] addr;
@@ -203,6 +215,14 @@ always @(posedge clk_50M) begin
     last_clock <= clock_btn;
 end
 
+/*  
+    访存测试：
+    数码管显示状态：0~3，用手动时钟按钮切换状态
+    0: 输入 写入数据 sw[31:0]
+    1: 输入 访存模式 sw[31:28], 地址 sw[22:0]
+    2: 访存执行周期，直接跳到3
+    3: 获取结果周期，显示 读取数据 led[14:0], 是否完成 led[15] ，之后直接跳到0
+ */
 always @(posedge clk_50M or posedge reset_btn) begin
     if(reset_btn == 1) begin
         addr <= 0;
@@ -231,6 +251,7 @@ always @(posedge clk_50M or posedge reset_btn) begin
             number <= 3;
         end else if(number == 3) begin
             rdata <= rdata_out;
+            rdata[15] <= ok;
             number <= 0;
         end
 
