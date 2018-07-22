@@ -163,52 +163,52 @@ always @(posedge clk_50M) begin
     clk25 <= ~clk25;
 end
 
-// ram ram(
-//     .clk(clk_50M),
-//     .rst(~reset_btn),
-//     .addr(addr),
-//     .mode(mode),
-//     .rdata(rdata_out),
-//     .wdata(wdata),
-//     .ok(ok),
-//     .base_ram_data(base_ram_data),
-//     .base_ram_addr(base_ram_addr),
-//     .base_ram_be_n(base_ram_be_n),
-//     .base_ram_ce_n(base_ram_ce_n),
-//     .base_ram_oe_n(base_ram_oe_n),
-//     .base_ram_we_n(base_ram_we_n),
-//     .ext_ram_data(ext_ram_data),
-//     .ext_ram_addr(ext_ram_addr),
-//     .ext_ram_be_n(ext_ram_be_n),
-//     .ext_ram_ce_n(ext_ram_ce_n),
-//     .ext_ram_oe_n(ext_ram_oe_n),
-//     .ext_ram_we_n(ext_ram_we_n)
-// );
+ram ram(
+    .clk(clk_50M),
+    .addr(ram_addr),
+    .mode(ram_mode),
+    .rdata(ram_rdata_out),
+    .wdata(ram_wdata),
+    .ok(ram_ok),
+    .base_ram_data(base_ram_data),  // Share with Serial [7:0]
+    .base_ram_addr(base_ram_addr),
+    .base_ram_be_n(base_ram_be_n),
+    .base_ram_ce_n(base_ram_ce_n),  // Input from RAM
+    .base_ram_oe_n(base_ram_oe_n),
+    .base_ram_we_n(base_ram_we_n),
+    .ext_ram_data(ext_ram_data),
+    .ext_ram_addr(ext_ram_addr),
+    .ext_ram_be_n(ext_ram_be_n),
+    .ext_ram_ce_n(ext_ram_ce_n),
+    .ext_ram_oe_n(ext_ram_oe_n),
+    .ext_ram_we_n(ext_ram_we_n)
+);
 
 serial serial(
     .clk(clk_50M),
-    .rst(~reset_btn),
-    .addr(addr),
-    .mode(mode),
-    .rdata(rdata_out),
-    .wdata(wdata),
-    .ok(ok),
+    .addr(uart_addr),
+    .mode(uart_mode),
+    .rdata(uart_rdata_out),
+    .wdata(uart_wdata),
+    .ok(uart_ok),
     .uart_rdn(uart_rdn),
     .uart_wrn(uart_wrn),
     .uart_dataready(uart_dataready),
     .uart_tbre(uart_tbre),
     .uart_tsre(uart_tsre),
-    .base_ram_data(base_ram_data[7:0]),
-    .base_ram_ce_n(base_ram_ce_n)
+    .base_ram_data(base_ram_data[7:0]), // Share with RAM
+    .base_ram_ce_n(base_ram_ce_n)       // Output to RAM
 );
 
-reg [31:0] addr;
-reg [ 3:0] mode;
-reg [31:0] rdata;
-reg [31:0] wdata;
-wire ok;
-wire[31:0] rdata_out;
-assign leds = rdata[15:0];
+reg [31:0] ram_addr,    uart_addr;
+reg [ 3:0] ram_mode,    uart_mode, mode1;
+reg [31:0] ram_rdata,   uart_rdata;
+reg [31:0] ram_wdata,   uart_wdata;
+wire       ram_ok,      uart_ok;
+wire[31:0] ram_rdata_out, uart_rdata_out;
+
+reg [15:0] led;
+assign leds = led;
 
 reg last_clock;
 always @(posedge clk_50M) begin
@@ -217,44 +217,74 @@ end
 
 /*  
     访存测试：
-    数码管显示状态：0~3，用手动时钟按钮切换状态
-    0: 输入 写入数据 sw[31:0]
-    1: 输入 访存模式 sw[31:28], 地址 sw[22:0]
-    2: 访存执行周期，直接跳到3
-    3: 获取结果周期，显示 读取数据 led[14:0], 是否完成 led[15] ，之后直接跳到0
+    数码管显示状态：0~6，用手动时钟按钮切换状态，时钟50MHz
+    0: 输入 RAM 写入数据 sw[31:0]
+    1: 输入 RAM 访存模式 sw[31:28], 地址 sw[22:0]
+    2: 输入 串口 写入数据 sw[7:0], 访存模式 sw[31:28], 地址 sw[15:8]
+    3: 访存执行周期，直接跳到4
+    4: 获取结果周期，直接跳到5
+    5: 显示 RAM 读取数据 led[14:0], 是否完成 led[15]
+    6: 显示 串口 读取数据 led[14:0], 是否完成 led[15]
  */
 always @(posedge clk_50M or posedge reset_btn) begin
     if(reset_btn == 1) begin
-        addr <= 0;
-        mode <= 0;
-        wdata <= 0;
-        rdata <= 0;
+        ram_addr <= 0;
+        ram_mode <= 0;
+        ram_wdata <= 0;
+        ram_rdata <= 0;
+        uart_addr <= 0;
+        uart_mode <= 0;
+        uart_wdata <= 0;
+        uart_rdata <= 0;
+        mode1 <= 0;
+        led <= 0;
         number <= 0;
     end else begin
-        addr <= addr;
-        mode <= 4'b0000;
-        wdata <= wdata;
-        rdata <= rdata;
+        ram_addr <= ram_addr;
+        ram_mode <= 4'b0000;
+        ram_wdata <= ram_wdata;
+        ram_rdata <= ram_rdata;
+        uart_addr <= uart_addr;
+        uart_mode <= 4'b0000;
+        uart_wdata <= uart_wdata;
+        uart_rdata <= uart_rdata;
+        mode1 <= mode1;
+        led <= led;
         number <= number;
-        if(number == 0) begin
-            if(clock_btn && ~last_clock) begin
-                wdata <= dip_sw;
+        case(number)
+            0: if(clock_btn && ~last_clock) begin
+                ram_wdata <= dip_sw;
                 number <= 1;
             end
-        end else if(number == 1) begin
-            if(clock_btn && ~last_clock) begin
-                addr <= {{9{1'b0}}, dip_sw[22:0]};
-                mode <= dip_sw[31:28];
+            1: if(clock_btn && ~last_clock) begin
+                ram_addr <= {{9{1'b0}}, dip_sw[22:0]};
+                mode1 <= dip_sw[31:28];
                 number <= 2;
             end
-        end else if(number == 2) begin
-            number <= 3;
-        end else if(number == 3) begin
-            rdata <= rdata_out;
-            rdata[15] <= ok;
-            number <= 0;
-        end
-
+            2: if(clock_btn && ~last_clock) begin
+                uart_wdata[7:0] <= dip_sw[7:0];
+                uart_addr <= {{24{1'b0}}, dip_sw[15:8]};
+                uart_mode <= dip_sw[31:28];
+                ram_mode <= mode1;
+                number <= 3;
+            end
+            3:  number <= 4;
+            4: begin
+                ram_rdata <= ram_rdata_out;
+                uart_rdata <= uart_rdata_out;
+                ram_rdata[15] <= ram_ok;
+                uart_rdata[15] <= uart_ok;
+                number <= 5;
+            end
+            5: if(clock_btn && ~last_clock) begin
+                led <= ram_rdata;
+                number <= 6;
+            end
+            default: if(clock_btn && ~last_clock) begin
+                led <= uart_rdata;
+                number <= 0;
+            end
+        endcase
     end
 end
 

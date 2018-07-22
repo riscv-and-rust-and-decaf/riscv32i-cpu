@@ -1,6 +1,5 @@
 module serial(
     input wire clk,                 //50MHz 时钟输入
-    input wire rst,                 //复位，低有效
 
     //RAMOp接口
     input wire[31:0] addr,          //物理地址，低3位有效
@@ -22,6 +21,7 @@ module serial(
     //BaseRAM信号
     inout  wire[7:0] base_ram_data, //数据，低8位，与BaseRAM共享
     output wire base_ram_ce_n       //BaseRAM片选，默认为低，读写串口时为高
+                                    //由于要输入到RAM，因此延迟应尽量低
 );
 
 // mode
@@ -57,8 +57,8 @@ wire [7:0] status   = (lock_can_write << 5) | lock_can_read;
 // Output
 assign uart_wrn = is_write? clk: 1;
 assign uart_rdn = ~is_read;
-assign base_ram_data = is_write? lock_wdata: {32{1'bz}};
-assign base_ram_ce_n = is_read || is_write;
+assign base_ram_data = is_write? lock_wdata: {8{1'bz}};
+assign base_ram_ce_n = lock_addr == 0 && lock_mode != NOP; // As short as possible!
 
 wire [7:0] rdata_raw = 
     is_test? status: 
@@ -66,6 +66,6 @@ wire [7:0] rdata_raw =
 // sign/zero extension
 assign rdata = {{24{lock_mode == LB && rdata_raw[7]}}, rdata_raw};
 
-assign ok = is_read || is_write || is_test;
+assign ok = lock_mode != NOP;
 
 endmodule

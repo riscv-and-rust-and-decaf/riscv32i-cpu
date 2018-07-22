@@ -2,7 +2,6 @@
 
 module ram(
     input wire clk,                 //50MHz 时钟输入
-    input wire rst,                 //复位，低有效
 
     //RAMOp接口
     input wire[31:0] addr,          //物理地址，低23位有效，低2位忽略，31位指示是否为串口
@@ -15,7 +14,7 @@ module ram(
     inout wire[31:0] base_ram_data, //BaseRAM数据，低8位与CPLD串口控制器共享
     output wire[19:0] base_ram_addr, //BaseRAM地址
     output wire[3:0] base_ram_be_n,  //BaseRAM字节使能，低有效。如果不使用字节使能，请保持为0
-    output wire base_ram_ce_n,       //BaseRAM片选，低有效
+    input wire base_ram_ce_n,        //BaseRAM片选，低有效。当串口占用时，为高，访存失败
     output wire base_ram_oe_n,       //BaseRAM读使能，低有效
     output wire base_ram_we_n,       //BaseRAM写使能，低有效
 
@@ -49,17 +48,20 @@ always @(posedge clk) begin
     lock_wdata <= wdata;
 end
 
-wire is_read = ~lock_mode[3] && (lock_mode != NOP);
-wire is_write = lock_mode[3];
+// Decide op
+//  If RAM1 is using by serial, do nothing.
 wire chip_selbase_n = lock_addr[22];
+wire conflict = base_ram_ce_n;
+wire is_read = ~lock_mode[3] && (lock_mode != NOP) && ~conflict;
+wire is_write = lock_mode[3] && ~conflict;
 wire [19:0] word_sel = lock_addr[21:2];
 wire [3:0] be = 
     (lock_mode == SH || lock_mode == LH || lock_mode == LHU) ? 4'b1100 :
     (lock_mode == SB || lock_mode == LB || lock_mode == LBU) ? 4'b1110 :
     /* LW, SW, NOP */ 4'b0000;
 
+// Output
 // ce
-assign base_ram_ce_n = chip_selbase_n;
 assign ext_ram_ce_n = ~chip_selbase_n;
 // addr
 assign base_ram_addr = word_sel;
@@ -77,7 +79,7 @@ assign ext_ram_be_n  = be;
 assign base_ram_data = is_write? lock_wdata: {32{1'bz}};
 assign ext_ram_data  = is_write? lock_wdata: {32{1'bz}};
 // ok
-assign ok = lock_mode != NOP;
+assign ok = is_read || is_write;
 
 // deals with read data
 // before byte selection and extension
