@@ -173,7 +173,7 @@ ram ram(
     .base_ram_data(base_ram_data),  // Share with Serial [7:0]
     .base_ram_addr(base_ram_addr),
     .base_ram_be_n(base_ram_be_n),
-    .base_ram_ce_n(base_ram_ce_n),  // Input from RAM
+    .base_ram_ce_n(base_ram_ce_n),  // Input from Serial
     .base_ram_oe_n(base_ram_oe_n),
     .base_ram_we_n(base_ram_we_n),
     .ext_ram_data(ext_ram_data),
@@ -200,12 +200,32 @@ serial serial(
     .base_ram_ce_n(base_ram_ce_n)       // Output to RAM
 );
 
-reg [31:0] ram_addr,    uart_addr;
-reg [ 3:0] ram_mode,    uart_mode, mode1;
-reg [31:0] ram_rdata,   uart_rdata;
-reg [31:0] ram_wdata,   uart_wdata;
-wire       ram_ok,      uart_ok;
-wire[31:0] ram_rdata_out, uart_rdata_out;
+flash flash(
+    .clk(clk_50M),
+    .rst(~reset_btn),
+    .addr(flash_addr),
+    .mode(flash_mode),
+    .rdata(flash_rdata_out),
+    .wdata(flash_wdata),
+    .ok(flash_ok),
+    .ready(flash_ready),
+    .flash_a(flash_a),
+    .flash_d(flash_d),
+    .flash_rp_n(flash_rp_n),
+    .flash_vpen(flash_vpen),
+    .flash_ce_n(flash_ce_n),
+    .flash_oe_n(flash_oe_n),
+    .flash_we_n(flash_we_n),
+    .flash_byte_n(flash_byte_n)
+);
+
+reg [31:0] ram_addr,    uart_addr,  flash_addr;
+reg [ 3:0] ram_mode,    uart_mode,  flash_mode,     mode1;
+reg [31:0] ram_rdata,   uart_rdata, flash_rdata;
+reg [31:0] ram_wdata,   uart_wdata, flash_wdata;
+wire       ram_ok,      uart_ok,    flash_ok;
+wire[31:0] ram_rdata_out, uart_rdata_out, flash_rdata_out;
+wire flash_ready;
 
 reg [15:0] led;
 assign leds = led;
@@ -216,76 +236,77 @@ always @(posedge clk_50M) begin
 end
 
 /*  
-    访存测试：
-    数码管显示状态：0~6，用手动时钟按钮切换状态，时钟50MHz
-    0: 输入 RAM 写入数据 sw[31:0]
-    1: 输入 RAM 访存模式 sw[31:28], 地址 sw[22:0]
-    2: 输入 串口 写入数据 sw[7:0], 访存模式 sw[31:28], 地址 sw[15:8]
-    3: 访存执行周期，直接跳到4
-    4: 获取结果周期，直接跳到5
-    5: 显示 RAM 读取数据 led[14:0], 是否完成 led[15]
-    6: 显示 串口 读取数据 led[14:0], 是否完成 led[15]
+    Not work!
+
+    Flash访存测试：
+    数码管显示状态：0~n，用手动时钟按钮切换状态，时钟50MHz
+    0: 输入 访存模式 sw[31:28], 地址 sw[22:0]
+    -: 获取结果周期，如果不ok，一直+1
+    n: 显示 读取数据 led[15:0]，再按一次显示 led[31:16]，并跳回0
+        n为总读取周期
+ */
+// reg ok;
+// always @(posedge clk_50M or posedge reset_btn) begin
+//     if(reset_btn == 1) begin
+//         flash_addr <= 0;
+//         flash_mode <= 0;
+//         flash_rdata <= 0;
+//         led <= 0;
+//         number <= 0;
+//         ok <= 0;
+//     end else begin
+//         flash_addr <= 0;
+//         flash_mode <= 0;
+//         flash_rdata <= flash_rdata;
+//         led <= led;
+//         ok <= ok;
+//         if(number == 0) begin // input addr
+//             number <= 0;
+//             ok <= 0;
+//             if(clock_btn && ~last_clock && flash_ready) begin
+//                 flash_addr <= {{9{1'b0}}, dip_sw[22:0]};
+//                 flash_mode <= dip_sw[31:28];
+//                 number <= 1;
+//             end
+//         end else if(~ok) begin  // wait for ok
+//             number <= number + 1;
+//             if(flash_ok) begin
+//                 number <= number;
+//                 ok <= 1;
+//                 flash_rdata <= flash_rdata_out;
+//             end
+//         end else begin // ok
+//             number <= number;
+//             led <= flash_rdata[15:0];
+//             if(clock_btn && ~last_clock) begin
+//                 led <= flash_rdata[31:16];
+//                 number <= 0;
+//             end
+//         end
+//     end
+// end
+
+
+/*  
+    Flash访存测试（无状态）：
+    时钟50MHz
+    输入 访存模式 sw[31:28], 地址 sw[22:0]
+    led[15:0] 显示 rdata[15:0]
  */
 always @(posedge clk_50M or posedge reset_btn) begin
-    if(reset_btn == 1) begin
-        ram_addr <= 0;
-        ram_mode <= 0;
-        ram_wdata <= 0;
-        ram_rdata <= 0;
-        uart_addr <= 0;
-        uart_mode <= 0;
-        uart_wdata <= 0;
-        uart_rdata <= 0;
-        mode1 <= 0;
-        led <= 0;
-        number <= 0;
-    end else begin
-        ram_addr <= ram_addr;
-        ram_mode <= 4'b0000;
-        ram_wdata <= ram_wdata;
-        ram_rdata <= ram_rdata;
-        uart_addr <= uart_addr;
-        uart_mode <= 4'b0000;
-        uart_wdata <= uart_wdata;
-        uart_rdata <= uart_rdata;
-        mode1 <= mode1;
-        led <= led;
-        number <= number;
-        case(number)
-            0: if(clock_btn && ~last_clock) begin
-                ram_wdata <= dip_sw;
-                number <= 1;
-            end
-            1: if(clock_btn && ~last_clock) begin
-                ram_addr <= {{9{1'b0}}, dip_sw[22:0]};
-                mode1 <= dip_sw[31:28];
-                number <= 2;
-            end
-            2: if(clock_btn && ~last_clock) begin
-                uart_wdata[7:0] <= dip_sw[7:0];
-                uart_addr <= {{24{1'b0}}, dip_sw[15:8]};
-                uart_mode <= dip_sw[31:28];
-                ram_mode <= mode1;
-                number <= 3;
-            end
-            3:  number <= 4;
-            4: begin
-                ram_rdata <= ram_rdata_out;
-                uart_rdata <= uart_rdata_out;
-                ram_rdata[15] <= ram_ok;
-                uart_rdata[15] <= uart_ok;
-                number <= 5;
-            end
-            5: if(clock_btn && ~last_clock) begin
-                led <= ram_rdata;
-                number <= 6;
-            end
-            default: if(clock_btn && ~last_clock) begin
-                led <= uart_rdata;
-                number <= 0;
-            end
-        endcase
+    if(reset_btn == 1)
+        flash_rdata <= 0;
+    else begin
+        flash_rdata <= flash_rdata;
+        if(flash_ok) 
+            flash_rdata <= flash_rdata_out;
     end
+end
+
+always @* begin
+    flash_addr = {{9{1'b0}}, dip_sw[22:0]};
+    flash_mode = dip_sw[31:28];
+    led = flash_rdata[15:0];
 end
 
 endmodule
