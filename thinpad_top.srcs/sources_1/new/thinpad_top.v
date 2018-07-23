@@ -167,7 +167,7 @@ ram ram(
     .clk(clk_50M),
     .addr(ram_addr),
     .mode(ram_mode),
-    .rdata(ram_rdata_out),
+    .rdata(ram_rdata),
     .wdata(ram_wdata),
     .ok(ram_ok),
     .base_ram_data(base_ram_data),  // Share with Serial [7:0]
@@ -186,11 +186,11 @@ ram ram(
 
 serial serial(
     .clk(clk_50M),
-    .addr(uart_addr),
-    .mode(uart_mode),
-    .rdata(uart_rdata_out),
-    .wdata(uart_wdata),
-    .ok(uart_ok),
+    .addr(serial_addr),
+    .mode(serial_mode),
+    .rdata(serial_rdata),
+    .wdata(serial_wdata),
+    .ok(serial_ok),
     .uart_rdn(uart_rdn),
     .uart_wrn(uart_wrn),
     .uart_dataready(uart_dataready),
@@ -205,7 +205,7 @@ flash flash(
     .rst(~reset_btn),
     .addr(flash_addr),
     .mode(flash_mode),
-    .rdata(flash_rdata_out),
+    .rdata(flash_rdata),
     .wdata(flash_wdata),
     .ok(flash_ok),
     .ready(flash_ready),
@@ -219,12 +219,11 @@ flash flash(
     .flash_byte_n(flash_byte_n)
 );
 
-reg [31:0] ram_addr,    uart_addr,  flash_addr;
-reg [ 3:0] ram_mode,    uart_mode,  flash_mode,     mode1;
-reg [31:0] ram_rdata,   uart_rdata, flash_rdata;
-reg [31:0] ram_wdata,   uart_wdata, flash_wdata;
-wire       ram_ok,      uart_ok,    flash_ok;
-wire[31:0] ram_rdata_out, uart_rdata_out, flash_rdata_out;
+wire [31:0] ram_addr,    serial_addr,  flash_addr;
+wire [ 3:0] ram_mode,    serial_mode,  flash_mode;
+wire [31:0] ram_rdata,   serial_rdata, flash_rdata;
+wire [31:0] ram_wdata,   serial_wdata, flash_wdata;
+wire        ram_ok,      serial_ok,    flash_ok;
 wire flash_ready;
 
 reg [15:0] led;
@@ -235,78 +234,24 @@ always @(posedge clk_50M) begin
     last_clock <= clock_btn;
 end
 
-/*  
-    Not work!
-
-    Flash访存测试：
-    数码管显示状态：0~n，用手动时钟按钮切换状态，时钟50MHz
-    0: 输入 访存模式 sw[31:28], 地址 sw[22:0]
-    -: 获取结果周期，如果不ok，一直+1
-    n: 显示 读取数据 led[15:0]，再按一次显示 led[31:16]，并跳回0
-        n为总读取周期
- */
-// reg ok;
-// always @(posedge clk_50M or posedge reset_btn) begin
-//     if(reset_btn == 1) begin
-//         flash_addr <= 0;
-//         flash_mode <= 0;
-//         flash_rdata <= 0;
-//         led <= 0;
-//         number <= 0;
-//         ok <= 0;
-//     end else begin
-//         flash_addr <= 0;
-//         flash_mode <= 0;
-//         flash_rdata <= flash_rdata;
-//         led <= led;
-//         ok <= ok;
-//         if(number == 0) begin // input addr
-//             number <= 0;
-//             ok <= 0;
-//             if(clock_btn && ~last_clock && flash_ready) begin
-//                 flash_addr <= {{9{1'b0}}, dip_sw[22:0]};
-//                 flash_mode <= dip_sw[31:28];
-//                 number <= 1;
-//             end
-//         end else if(~ok) begin  // wait for ok
-//             number <= number + 1;
-//             if(flash_ok) begin
-//                 number <= number;
-//                 ok <= 1;
-//                 flash_rdata <= flash_rdata_out;
-//             end
-//         end else begin // ok
-//             number <= number;
-//             led <= flash_rdata[15:0];
-//             if(clock_btn && ~last_clock) begin
-//                 led <= flash_rdata[31:16];
-//                 number <= 0;
-//             end
-//         end
-//     end
-// end
-
-
-/*  
-    Flash访存测试（无状态）：
-    时钟50MHz
-    输入 访存模式 sw[31:28], 地址 sw[22:0]
-    led[15:0] 显示 rdata[15:0]
- */
-always @(posedge clk_50M or posedge reset_btn) begin
-    if(reset_btn == 1)
-        flash_rdata <= 0;
-    else begin
-        flash_rdata <= flash_rdata;
-        if(flash_ok) 
-            flash_rdata <= flash_rdata_out;
-    end
-end
-
-always @* begin
-    flash_addr = {{9{1'b0}}, dip_sw[22:0]};
-    flash_mode = dip_sw[31:28];
-    led = flash_rdata[15:0];
-end
+ChiselTop ChiselTop(
+  .clock(clk_50M),
+  .reset(~reset_btn),
+  .io_ram_addr(ram_addr),
+  .io_ram_mode(ram_mode),
+  .io_ram_wdata(ram_wdata),
+  .io_ram_rdata(ram_rdata),
+  .io_ram_ok(ram_ok),
+  .io_flash_addr(flash_addr),
+  .io_flash_mode(flash_mode),
+  .io_flash_wdata(flash_wdata),
+  .io_flash_rdata(flash_rdata),
+  .io_flash_ok(flash_ok),
+  .io_serial_addr(serial_addr),
+  .io_serial_mode(serial_mode),
+  .io_serial_wdata(serial_wdata),
+  .io_serial_rdata(serial_rdata),
+  .io_serial_ok(serial_ok)
+);
 
 endmodule

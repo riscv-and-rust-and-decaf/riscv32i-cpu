@@ -27,6 +27,7 @@ module serial(
 // mode
 parameter NOP = 4'b0000;
 parameter LB  = 4'b0100;
+parameter LBU = 4'b0101;
 parameter SB  = 4'b1100;
 
 // Pre process input
@@ -51,7 +52,7 @@ end
 // Decide op
 wire is_read 	= lock_addr == 0 && lock_can_read && (~lock_mode[3] && (lock_mode != NOP));
 wire is_write 	= lock_addr == 0 && lock_can_write && lock_mode[3];
-wire is_test    = lock_addr == 5 && lock_mode == LB;
+wire is_test    = lock_addr == 5 && (lock_mode == LB || lock_mode == LBU);
 wire [7:0] status   = (lock_can_write << 5) | lock_can_read;
 
 // Output

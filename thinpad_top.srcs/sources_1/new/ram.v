@@ -4,7 +4,7 @@ module ram(
     input wire clk,                 //50MHz 时钟输入
 
     //RAMOp接口
-    input wire[31:0] addr,          //物理地址，低23位有效，低2位忽略，31位指示是否为串口
+    input wire[31:0] addr,          //物理地址，低23位有效，低2位忽略
     input wire[3:0] mode,           //访存模式，详见下面定义
     input wire[31:0] wdata,         //写数据
     output wire[31:0] rdata,        //读数据
