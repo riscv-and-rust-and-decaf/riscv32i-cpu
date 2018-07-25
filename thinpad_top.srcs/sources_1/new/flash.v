@@ -2,7 +2,7 @@
 
 module flash(
     input wire clk,           	    //50MHz 时钟输入
-    input wire rst,           		//复位，低有效
+    input wire rst,           		//复位，高有效
 
     //RAMOp接口
     input wire[31:0] addr,          //物理地址，低23位有效，低2位忽略
@@ -39,14 +39,14 @@ assign flash_ce_n   = 1'b0;         // always enable flash for demo
 assign flash_byte_n = 1'b1;         // 16-bit mode
 assign flash_we_n   = 1'b1;         // never write
 assign flash_vpen   = 1'b1;         // experience
-assign flash_rp_n   = rst;
+assign flash_rp_n   = ~rst;
 assign flash_d      = {16{1'bz}};   // readonly
 assign flash_oe_n   = 1'b0;         // dont know why but works
 
 reg [2:0] status;
 reg [31:0] rdata_raw;
 always @(posedge clk or negedge rst) begin
-    if (rst == 0) begin
+    if (rst == 1) begin
         rdata_raw <= 0;
         status <= 0;
         lock_addr <= 0;

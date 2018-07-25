@@ -202,7 +202,7 @@ serial serial(
 
 flash flash(
     .clk(clk_50M),
-    .rst(~reset_btn),
+    .rst(reset_btn),
     .addr(flash_addr),
     .mode(flash_mode),
     .rdata(flash_rdata),
@@ -226,8 +226,8 @@ wire [31:0] ram_wdata,   serial_wdata, flash_wdata;
 wire        ram_ok,      serial_ok,    flash_ok;
 wire flash_ready;
 
-reg [15:0] led;
-assign leds = led;
+wire [31:0] pc;
+assign leds = {uart_dataready, pc[14:0]};
 
 reg last_clock;
 always @(posedge clk_50M) begin
@@ -236,7 +236,7 @@ end
 
 ChiselTop ChiselTop(
   .clock(clk_50M),
-  .reset(~reset_btn),
+  .reset(reset_btn),
   .io_ram_addr(ram_addr),
   .io_ram_mode(ram_mode),
   .io_ram_wdata(ram_wdata),
@@ -251,7 +251,8 @@ ChiselTop ChiselTop(
   .io_serial_mode(serial_mode),
   .io_serial_wdata(serial_wdata),
   .io_serial_rdata(serial_rdata),
-  .io_serial_ok(serial_ok)
+  .io_serial_ok(serial_ok),
+  .io_debug_ifpc(pc)
 );
 
 endmodule
