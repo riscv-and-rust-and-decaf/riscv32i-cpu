@@ -4,7 +4,7 @@ module ram(
     input wire clk,                 //50MHz 时钟输入
 
     //RAMOp接口
-    input wire[31:0] addr,          //物理地址，低23位有效，低2位忽略
+    input wire[31:0] addr,          //物理地址，低23位有效。不支持跨字读写。
     input wire[3:0] mode,           //访存模式，详见下面定义
     input wire[31:0] wdata,         //写数据
     output wire[31:0] rdata,        //读数据
@@ -55,9 +55,12 @@ wire conflict = base_ram_ce_n;
 wire is_read = ~lock_mode[3] && (lock_mode != NOP) && ~conflict;
 wire is_write = lock_mode[3] && ~conflict;
 wire [19:0] word_sel = lock_addr[21:2];
+wire [1:0]  byte_sel = lock_addr[1:0];
 wire [3:0] be = 
-    (lock_mode == SH || lock_mode == LH || lock_mode == LHU) ? 4'b1100 :
-    (lock_mode == SB || lock_mode == LB || lock_mode == LBU) ? 4'b1110 :
+    (lock_mode == SH || lock_mode == LH || lock_mode == LHU) ? 
+        (byte_sel[1]? 4'b0011: 4'b1100) :
+    (lock_mode == SB || lock_mode == LB || lock_mode == LBU) ? 
+        ~(1 << byte_sel) :
     /* LW, SW, NOP */ 4'b0000;
 
 // Output
@@ -83,7 +86,7 @@ assign ok = is_read || is_write;
 
 // deals with read data
 // before byte selection and extension
-wire [31:0] rdata_raw = chip_selbase_n ? ext_ram_data : base_ram_data;
+wire [31:0] rdata_raw = (chip_selbase_n ? ext_ram_data : base_ram_data) >> (8 * byte_sel);
 // sign/zero extension
 assign rdata = 
     (lock_mode == LH) ? {{16{rdata_raw[15]}}, rdata_raw[15:0]} :
