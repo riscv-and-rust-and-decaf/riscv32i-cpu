@@ -79,8 +79,8 @@ assign ext_ram_oe_n  = ~is_read;
 assign base_ram_be_n = be;
 assign ext_ram_be_n  = be;
 // write data
-assign base_ram_data = is_write? lock_wdata: {32{1'bz}};
-assign ext_ram_data  = is_write? lock_wdata: {32{1'bz}};
+assign base_ram_data = is_write? lock_wdata << (8 * byte_sel): {32{1'bz}};
+assign ext_ram_data  = is_write? lock_wdata << (8 * byte_sel): {32{1'bz}};
 // ok
 assign ok = is_read || is_write;
 
